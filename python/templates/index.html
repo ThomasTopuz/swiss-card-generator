@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Swiss card generator</title>
+    <script>
+        async function uploadFileAndMessage(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+
+            try {
+                const response = await fetch("/upload", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = "image_with_qr.png";
+                    link.click();
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.error}`);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            }
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body>
+    <br>
+    <div class="p-5">
+        <h1 class="text-3xl">Swiss card generator</h1>
+        <form id="upload-form" onsubmit="uploadFileAndMessage(event)">
+            <input type="file" name="file" required placeholder="image"
+                class="bg-blue-500 mb-3 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded ">
+            <br>
+            <input type="text" name="message"
+                class=" mr-2 mb-2 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="Type your url" required>
+            <br>
+            <button type="submit"
+                class="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded ">
+                Generate card
+            </button>
+        </form>
+
+    </div>
+</body>
+
+</html>
